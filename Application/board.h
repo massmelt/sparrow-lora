@@ -109,12 +109,21 @@
 
 // I2C2 --  Note that on the UFQFPN48 package, SCL is only available on PA12.
 // This prevents any possible use of RF_BUSY, which is ONLY available on PA12.
+#if (CURRENT_BOARD == BOARD_WIO_E5)
+#define I2C2_SDA_Pin                    GPIO_PIN_15         // PA15
+#define I2C2_SDA_GPIO_Port              GPIOA
+#define I2C2_SDA_GPIO_AF                GPIO_AF4_I2C2
+#define I2C2_SCL_Pin                    GPIO_PIN_15         // PB15
+#define I2C2_SCL_GPIO_Port              GPIOB
+#define I2C2_SCL_GPIO_AF                GPIO_AF4_I2C2
+#else
 #define I2C2_SDA_Pin                    GPIO_PIN_11         // PA11
 #define I2C2_SDA_GPIO_Port              GPIOA
 #define I2C2_SDA_GPIO_AF                GPIO_AF4_I2C2
 #define I2C2_SCL_Pin                    GPIO_PIN_12         // PA12
 #define I2C2_SCL_GPIO_Port              GPIOA
 #define I2C2_SCL_GPIO_AF                GPIO_AF4_I2C2
+#endif
 #define I2C2_RX_DMA_Channel             DMA1_Channel5
 #define I2C2_RX_DMA_IRQn                DMA1_Channel5_IRQn
 #define I2C2_RX_DMA_IRQHandler          DMA1_Channel5_IRQHandler
