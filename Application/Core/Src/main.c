@@ -947,6 +947,12 @@ void MX_USART2_UART_Init(void)
 
 }
 
+// USART1 suspend function
+void MX_USART1_UART_Suspend(void)
+{
+	// TODO: mimic uart2 -- hgiang
+}
+
 // USART2 suspend function
 void MX_USART2_UART_Suspend(void)
 {
@@ -958,6 +964,16 @@ void MX_USART2_UART_Suspend(void)
     // on either core - whichever is available".
     LL_EXTI_EnableIT_0_31(LL_EXTI_LINE_27);
 
+}
+
+void MX_USART1_UART_Resume(void)
+{
+    if (HAL_UART_Init(&huart1) != HAL_OK) {
+        Error_Handler();
+    }
+    if (HAL_DMA_Init(&hdma_usart1_tx) != HAL_OK) {
+        Error_Handler();
+    }
 }
 
 // USART2 resume function

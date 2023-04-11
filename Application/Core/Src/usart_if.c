@@ -35,6 +35,7 @@ void vcom_DMA_TX_IRQHandler(void);
 // Handles
 extern DMA_HandleTypeDef hdma_usart2_tx;
 extern UART_HandleTypeDef huart2;
+extern UART_HandleTypeDef huart1;
 
 // Character buffer
 uint8_t charRx;

@@ -12,7 +12,7 @@
 #endif
 
 // Receive buffer and ISRs
-#if (DEBUGGER_ON_USART2||DEBUGGER_ON_LPUART1)
+#if (DEBUGGER_ON_USART1||DEBUGGER_ON_USART2||DEBUGGER_ON_LPUART1)
 void dbgReceivedByteISR(UART_HandleTypeDef *huart);
 void dbgRestartReceive(UART_HandleTypeDef *huart);
 bool dbgReceiveOverrun = false;
@@ -59,7 +59,10 @@ void MX_DBG(const char *message, size_t length, uint32_t timeout)
 {
 
     // Output on the appropriate port
-#if (DEBUGGER_ON_USART2||DEBUGGER_ON_LPUART1)
+#if (DEBUGGER_ON_USART1||DEBUGGER_ON_USART2||DEBUGGER_ON_LPUART1)
+#if DEBUGGER_ON_USART1
+    MX_USART1_UART_Transmit((uint8_t *)message, length, timeout);
+#endif
 #if DEBUGGER_ON_USART2
     MX_USART2_UART_Transmit((uint8_t *)message, length, timeout);
 #endif
@@ -84,6 +87,9 @@ void MX_DBG(const char *message, size_t length, uint32_t timeout)
 // Prepare for going into stop2 mode
 void MX_DBG_Suspend()
 {
+#if DEBUGGER_ON_USART1
+    MX_USART1_UART_Suspend();
+#endif
 #if DEBUGGER_ON_USART2
     MX_USART2_UART_Suspend();
 #endif
@@ -95,6 +101,10 @@ void MX_DBG_Suspend()
 // Resume after coming out of STOP2 mode
 void MX_DBG_Resume()
 {
+#if DEBUGGER_ON_USART1
+    MX_USART1_UART_Resume();
+    dbgRestartReceive(&huart1);
+#endif
 #if DEBUGGER_ON_USART2
     MX_USART2_UART_Resume();
     dbgRestartReceive(&huart2);
@@ -142,12 +152,12 @@ uint8_t MX_DBG_Receive(bool *underrun, bool *overrun)
 }
 
 // ISR for debug character receive
-#if (DEBUGGER_ON_USART2||DEBUGGER_ON_LPUART1)
+#if (DEBUGGER_ON_USART1||DEBUGGER_ON_USART2||DEBUGGER_ON_LPUART1)
 void dbgRestartReceive(UART_HandleTypeDef *huart)
 {
     // Use zero/nonzero as an indicator of a valid byte having been received
     dbgReceiveBuffer[dbgReceiveFillIndex] = 0;
-#if DEBUGGER_ON_USART2
+#if DEBUGGER_ON_USART1||DEBUGGER_ON_USART2
 #ifdef USE_USART2_RX_DMA
     HAL_UART_Receive_DMA(huart, &dbgReceiveBuffer[dbgReceiveFillIndex], 1);
 #else
@@ -211,6 +221,16 @@ void MX_DBG_Init(void)
 {
 
     // Initialize debug output
+#if DEBUGGER_ON_USART1
+
+    // Init UART
+    MX_USART1_UART_Init();
+
+    // Register a receive callback and initiate the receive
+    HAL_UART_RegisterCallback(&huart1, HAL_UART_RX_COMPLETE_CB_ID, dbgReceivedByteISR);
+    dbgRestartReceive(&huart1);
+
+#endif
 #if DEBUGGER_ON_USART2
 
     // Init UART

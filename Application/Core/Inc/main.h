@@ -19,6 +19,8 @@ void MX_ADC_DeInit(void);
 bool MX_ADC_Values(uint16_t *wordValues, double *voltageValues, double *vref);
 double MX_ADC_A0_Voltage(void);
 void MX_USART1_UART_Init(void);
+void MX_USART1_UART_Suspend(void);
+void MX_USART1_UART_Resume(void);
 void MX_USART1_UART_Transmit(uint8_t *buf, uint32_t len, uint32_t timeoutMs);
 void MX_USART1_UART_DeInit(void);
 void MX_USART2_UART_Init(void);
@@ -80,6 +82,7 @@ void Error_Handler(void);
 
 extern RTC_HandleTypeDef hrtc;
 extern SUBGHZ_HandleTypeDef hsubghz;
+extern UART_HandleTypeDef huart1;
 extern UART_HandleTypeDef huart2;
 extern UART_HandleTypeDef hlpuart1;
 extern DMA_HandleTypeDef hdma_usart2_tx;
