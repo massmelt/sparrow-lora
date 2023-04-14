@@ -11,7 +11,13 @@
 #define RBI_CONF_RFO_HP                     2   // RADIO_CONF_RFO_HP
 
 // Indicates the type of switch that our hardware is configured for
+#if (CURRENT_BOARD == BOARD_WIO_E5)
+// LoRa-E5 only supports high power output mode
+// ref: https://github.com/Seeed-Studio/LoRaWan-E5-Node
+#define RBI_CONF_RFO                        RBI_CONF_RFO_HP
+#else
 #define RBI_CONF_RFO                        RBI_CONF_RFO_LP_HP
+#endif
 
 // Min and maximum powers as implemented by radio_driver.c
 #if (RBI_CONF_RFO == RBI_CONF_RFO_LP)
